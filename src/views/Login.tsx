@@ -1,5 +1,14 @@
 import { useState, type FormEvent } from "react";
-import { supabase } from "../lib/supabase";
+import { SUPABASE_URL, supabase } from "../lib/supabase";
+
+// "Failed to fetch" säger bara att anropet aldrig nådde fram. Visa vart det försökte gå,
+// eftersom en felskriven VITE_SUPABASE_URL är den vanligaste orsaken.
+function explain(message: string): string {
+  if (!/failed to fetch|networkerror|load failed/i.test(message)) return message;
+  let host = String(SUPABASE_URL);
+  try { host = new URL(String(SUPABASE_URL)).host; } catch { /* ogiltig adress, visa rått */ }
+  return `Kunde inte nå Supabase (${host}). Kontrollera att VITE_SUPABASE_URL är projektets adress, t.ex. https://abcdefgh.supabase.co, och att nätet fungerar.`;
+}
 
 export default function Login() {
   const [mode, setMode] = useState<"in" | "ny">("in");
@@ -15,10 +24,10 @@ export default function Login() {
     setBusy(true); setError(""); setInfo("");
     if (mode === "in") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message === "Invalid login credentials" ? "Fel e-postadress eller lösenord." : error.message);
+      if (error) setError(error.message === "Invalid login credentials" ? "Fel e-postadress eller lösenord." : explain(error.message));
     } else {
       const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) setError(error.message);
+      if (error) setError(explain(error.message));
       else if (!data.session) setInfo("Kontot är skapat. Bekräfta e-postadressen via länken i mejlet och logga sedan in.");
     }
     setBusy(false);
