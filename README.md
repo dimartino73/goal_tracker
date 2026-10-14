@@ -31,14 +31,15 @@ Migrationen körs för hand. Inget i repot kör den automatiskt.
 
 Kopiera `.env.example` till `.env` och fyll i `VITE_SUPABASE_URL` och `VITE_SUPABASE_ANON_KEY` (Project Settings → API). Anon/publishable-nyckeln är avsedd att vara publik. Lägg aldrig `service_role` här.
 
-### 3. Publicera (Cloudflare Pages)
+### 3. Publicera (Cloudflare)
 
-Skapa ett Pages-projekt kopplat till det här repot.
+Koppla repot i Cloudflare (Workers & Pages → Create → Import a repository).
 
 - Root directory: tomt (repots rot)
 - Build command: `npm run build`
-- Output directory: `dist`
-- Miljövariablerna från steg 2 under Settings → Environment variables.
+- Deploy command: `npx wrangler deploy` (standard för Workers). Den läser `wrangler.jsonc`, som pekar på `dist/`.
+- **Build variables** (Settings → Build → Variables and secrets): `VITE_SUPABASE_URL` och `VITE_SUPABASE_ANON_KEY`. De ska ligga som *build*-variabler, inte som körningsvariabler. Vite bakar in dem vid bygget, så ändrar du dem måste du bygga om.
+- Worker-namnet i Cloudflare måste vara samma som `name` i `wrangler.jsonc` (`goal-tracker`).
 
 Lägg sedan in den nya adressen i Supabase (steg 1.2).
 
