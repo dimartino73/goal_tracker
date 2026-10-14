@@ -1,8 +1,6 @@
 -- Dagräknare: vanor, dagposter och widget-nyckel.
 --
--- Körs för hand i Supabase Studio (SQL Editor). Mappen ligger medvetet under
--- dagraknare/ och inte i repots supabase/migrations/, så att Matlistans
--- migrate.yml aldrig kör den. Filen är idempotent och kan köras om.
+-- Körs för hand i Supabase Studio (SQL Editor). Filen är idempotent och kan köras om.
 
 -- ── Vanor ───────────────────────────────────────────────────────────────
 create table if not exists public.habits (

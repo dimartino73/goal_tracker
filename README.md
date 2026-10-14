@@ -2,7 +2,7 @@
 
 Följ hur många dagar du klarat en vana: dagar i rad, dagar totalt och hur långt det är kvar till målet. Du kan rätta tidigare dagar i kalendern. Flera vanor, eget mål per vana. PWA för telefonen och en widget för iOS via Scriptable.
 
-Det här är ett eget projekt som bor i en undermapp av `star-list-buddy` (Matlistan). Det har egen `package.json`, eget bygge och egna databasmigrationer, och är medvetet inte kopplat till Matlistans deploy eller `migrate.yml`. Flytta mappen till ett eget repo när du vill; inget i den pekar utanför sig själv.
+Eget projekt med eget bygge och egna databasmigrationer (körs för hand i Supabase Studio).
 
 ```sh
 cd dagraknare
@@ -19,13 +19,13 @@ npm run icons        # ritar om ikonerna i public/icons
 
 ### 1. Databasen (Supabase)
 
-Rekommendation: ett **eget Supabase-projekt**. Free-nivån tillåter två, och då delar Dagräknaren inte kvot (egress, lagring) med Matlistan och Receptspararen. Det går också bra att använda Matlistans projekt: tabellerna heter `habits`, `habit_days` och `habit_widget_tokens` och krockar inte med något där.
+Rekommendation: ett **eget Supabase-projekt**, så att kvoten (egress, lagring) inte delas med andra appar. Free-nivån tillåter två aktiva projekt. Det går också bra att återanvända ett befintligt projekt: tabellerna heter `habits`, `habit_days` och `habit_widget_tokens`.
 
 1. Supabase → SQL Editor → klistra in och kör `supabase/migrations/20261014090000_habits.sql`. Filen går att köra om utan skada.
 2. Authentication → URL Configuration: lägg in appens adress som **Site URL** och under **Redirect URLs** (`https://<din-adress>/**` och `http://localhost:8081/**`).
 3. Vill du stänga för andra: Authentication → Sign In / Providers → stäng av "Allow new users to sign up" när du själv har skapat ditt konto.
 
-Migrationen ligger under `dagraknare/supabase/` och inte i repots `supabase/migrations/`, så GitHub-workflowet som kör Matlistans migrationer rör den aldrig.
+Migrationen körs för hand. Inget i repot kör den automatiskt.
 
 ### 2. Miljövariabler
 
@@ -33,9 +33,9 @@ Kopiera `.env.example` till `.env` och fyll i `VITE_SUPABASE_URL` och `VITE_SUPA
 
 ### 3. Publicera (Cloudflare Pages)
 
-Skapa ett **nytt** Pages-projekt, inte Matlistans.
+Skapa ett Pages-projekt kopplat till det här repot.
 
-- Root directory: `dagraknare`
+- Root directory: tomt (repots rot)
 - Build command: `npm run build`
 - Output directory: `dist`
 - Miljövariablerna från steg 2 under Settings → Environment variables.
